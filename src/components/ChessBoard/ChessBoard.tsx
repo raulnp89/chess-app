@@ -98,7 +98,7 @@ for (let p = 0; p < 2; p++) {
       x: i,
       y: 6,
       type: PieceType.PEON,
-      team: teamType,
+      team: TeamType.OPPONENT,
     });
   }
 
@@ -108,7 +108,7 @@ for (let p = 0; p < 2; p++) {
       x: i,
       y: 1,
       type: PieceType.PEON,
-      team: teamType,
+      team: TeamType.OUR,
     });
   }
 }
@@ -126,12 +126,26 @@ const ChessBoard = () => {
     if (activePiece && chessboard) {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
       const y = Math.floor((e.clientY - chessboard.offsetTop) / 100);
-      setPieces((value) => {
+      setPieces((value: Piece[]) => {
         const pieces = value.map((p) => {
           if (p.image === activePiece?.id) {
-            referee.isValidMove(gridX, gridY, x, y, p.type, p.team);
-            p.x = x;
-            p.y = y;
+            const validMove = referee.isValidMove(
+              gridX,
+              gridY,
+              x,
+              y,
+              p.type,
+              p.team
+            );
+
+            if (validMove) {
+              p.x = x;
+              p.y = y;
+            } else {
+              activePiece.style.position = "relative";
+              activePiece.style.removeProperty("top");
+              activePiece.style.removeProperty("left");
+            }
           }
           return p;
         });
@@ -142,6 +156,7 @@ const ChessBoard = () => {
       setActivePiece(null);
     }
   }
+
   function grabPiece(e: React.MouseEvent) {
     const element = e.target as HTMLElement;
     const chessboard = chessboardRef.current;

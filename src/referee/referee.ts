@@ -15,6 +15,14 @@ export default class Referee {
     console.log(`Piece type: ${type}`);
 
     if (type === PieceType.PEON) {
+        if (team === TeamType.OUR) {
+          if (py === 1) {
+            if (px === x && (y - py === 1 || y - py === 2)) {
+              console.log("Valid move");
+              return true;
+            }
+          }
+        }
     }
 
     return false;
